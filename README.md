@@ -19,5 +19,5 @@ Load the extension unpacked in Chrome for development:
 
 ## Notes:
 
--   Clippings are stored in `chrome.storage.local` and grouped by site origin.
+-   Clippings are stored in `chrome.storage.local` and grouped by full page URL.
 -   To avoid automatic overwrite, we can change the `conflictAction` or provide an explicit Export flow.

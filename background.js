@@ -165,7 +165,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     try {
         const key = (() => {
             try {
-                return new URL(p.url || "").origin || p.url || "unknown";
+                return new URL(p.url || "").href || p.url || "unknown";
             } catch (e) {
                 return p.url || "unknown";
             }
@@ -324,7 +324,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 function generateMarkdown(sites) {
-    let md = "# Clippings\n\n";
+    // let md = "# Clippings\n\n";
     const origins = Object.keys(sites).sort();
     origins.forEach((origin) => {
         const site = sites[origin];

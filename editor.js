@@ -506,18 +506,24 @@ function onSave() {
     const date = new Date().toISOString();
 
     try {
-        const origin = new URL(url).origin || url || "unknown";
+        const key = (() => {
+            try {
+                return new URL(url).href || url || "unknown";
+            } catch (e) {
+                return url || "unknown";
+            }
+        })();
         chrome.storage.local.get({ sites: {} }, (res) => {
             const sites = res.sites || {};
-            if (!sites[origin]) {
-                sites[origin] = {
+            if (!sites[key]) {
+                sites[key] = {
                     title: title,
-                    url: origin,
+                    url: url || key,
                     created: date,
                     clippings: [],
                 };
             }
-            sites[origin].clippings.push({ text, note, tags, date });
+            sites[key].clippings.push({ text, note, tags, date });
             chrome.storage.local.set({ sites }, async () => {
                 // perform vault write directly from popup if configured
                 try {
