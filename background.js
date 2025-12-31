@@ -127,6 +127,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             sites[origin].clippings.push({
                 text: p.text || "",
                 note: p.note || "",
+                tags: Array.isArray(p.tags) ? p.tags : [],
                 date: p.date || new Date().toISOString(),
             });
             chrome.storage.local.set({ sites }, () => {
@@ -168,6 +169,8 @@ function generateMarkdown(sites) {
                 "\n> "
             )}\n\n`;
             if (c.note) md += `   - Note: ${c.note}\n`;
+            if (c.tags && c.tags.length)
+                md += `   - Tags: ${c.tags.join(", ")}\n`;
             md += `   - Saved: ${c.date}\n\n`;
         });
     });

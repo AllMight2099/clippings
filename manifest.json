@@ -15,8 +15,7 @@
     "action": {
         "default_popup": "editor.html",
         "default_title": "Create clipping"
-    }
-    ,
+    },
     "commands": {
         "create-clipping": {
             "suggested_key": {
