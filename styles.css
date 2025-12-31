@@ -1,0 +1,61 @@
+:root {
+    font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+body {
+    margin: 0;
+    padding: 12px;
+    background: #fff;
+    color: #111;
+}
+.container {
+    width: 480px;
+}
+h2 {
+    font-size: 16px;
+    margin: 0 0 8px;
+}
+.meta {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 8px;
+}
+#pageUrl {
+    display: block;
+    color: #0066cc;
+    text-decoration: none;
+    margin-bottom: 6px;
+}
+label {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #333;
+}
+textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    resize: vertical;
+}
+#selection {
+    background: #f8f8f8;
+}
+.buttons {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+}
+button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #f2f2f2;
+    cursor: pointer;
+}
+button#saveBtn {
+    background: #0b66ff;
+    color: #fff;
+    border-color: #0758d1;
+}

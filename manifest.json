@@ -1,0 +1,29 @@
+{
+    "manifest_version": 3,
+    "name": "Clippings",
+    "version": "0.1",
+    "description": "Save highlighted text as markdown clippings.",
+    "permissions": [
+        "contextMenus",
+        "storage",
+        "downloads",
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": ["<all_urls>"],
+    "background": { "service_worker": "background.js" },
+    "action": {
+        "default_popup": "editor.html",
+        "default_title": "Create clipping"
+    }
+    ,
+    "commands": {
+        "create-clipping": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Y",
+                "mac": "Command+Shift+Y"
+            },
+            "description": "Create clipping from selection / open editor"
+        }
+    }
+}
