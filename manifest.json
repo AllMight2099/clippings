@@ -20,7 +20,7 @@
         "create-clipping": {
             "suggested_key": {
                 "default": "Ctrl+Shift+Y",
-                "mac": "Command+Shift+Y"
+                "mac": "Command+Shift+O"
             },
             "description": "Create clipping from selection / open editor"
         }

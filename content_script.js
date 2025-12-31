@@ -18,14 +18,15 @@
       /* overlay is visual only and won't block clicks on the page */
       .clippings-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.12);z-index:2147483646;pointer-events:none}
       .clippings-panel{position:fixed;max-width:520px;width:min(92vw,520px);left:50%;top:20%;transform:translateX(-50%);background:#fff;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.2);padding:12px;font-family:system-ui,Segoe UI,Roboto,Arial;z-index:2147483647}
-      .clippings-title{cursor:move;user-select:none}
-      .clippings-panel h3{margin:0 0 8px;font-size:14px}
+    .clippings-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+    .clippings-title{cursor:move;user-select:none;display:block;padding-right:8px;white-space:normal;overflow:visible;word-break:break-word}
+    .clippings-panel h3{margin:0 0 8px;font-size:14px;line-height:1.2}
       .clippings-meta{font-size:12px;color:#444;margin-bottom:8px}
       .clippings-text, .clippings-comment{width:100%;min-height:60px;border:1px solid #ddd;border-radius:6px;padding:8px;margin-bottom:8px;resize:vertical;box-sizing:border-box;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;max-width:100%;overflow:auto}
       .clippings-actions{display:flex;gap:8px;justify-content:flex-end}
       .clippings-btn{padding:8px 12px;border-radius:6px;border:1px solid #ccc;background:#f2f2f2;cursor:pointer}
       .clippings-save{background:#0b66ff;color:#fff;border-color:#0758d1}
-      .clippings-close{position:absolute;right:8px;top:6px;border:none;background:transparent;font-size:18px;cursor:pointer}
+    .clippings-close{border:none;background:transparent;font-size:18px;cursor:pointer;padding:4px}
             /* suggestion box */
             .clippings-tags-wrap{position:relative}
             .clippings-suggestion-box{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,0.08);max-height:160px;overflow:auto;z-index:2147483648;display:none}
@@ -42,9 +43,11 @@
         panel.addEventListener("click", (e) => e.stopPropagation());
 
         panel.innerHTML = `
-      <h3 id="clippings_title" class="clippings-title">Create clipping</h3>
-      <button id="clippings_close" class="clippings-close" aria-label="Close">×</button>
-      <div class="clippings-meta"><a id="clippings_url" href="#" target="_blank"></a></div>
+            <div class="clippings-header">
+                <h3 id="clippings_title" class="clippings-title">Create clipping</h3>
+                <button id="clippings_close" class="clippings-close" aria-label="Close">×</button>
+            </div>
+            <div class="clippings-meta"><a id="clippings_url" href="#" target="_blank"></a></div>
       <label>Selection</label>
       <div id="clippings_text" class="clippings-text" contenteditable="false" aria-label="selection"></div>
     <label>Note (optional)</label>
