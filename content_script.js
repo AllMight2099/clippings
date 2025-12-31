@@ -265,32 +265,36 @@
 
         // Wire Choose Clippings folder button in injected modal — request picker in extension context
         (function wireModalDirPicker() {
-            const chooseBtn = ctx.shadow.querySelector('#clippings_choose_dir');
-            const statusEl = ctx.shadow.querySelector('#clippings_dir_status');
+            const chooseBtn = ctx.shadow.querySelector("#clippings_choose_dir");
+            const statusEl = ctx.shadow.querySelector("#clippings_dir_status");
             if (!chooseBtn || !statusEl) return;
 
             function refreshStatus() {
                 try {
-                    chrome.storage.local.get(['vaultClippingsChosen', 'vaultClippingsName'], (r) => {
-                        if (r && r.vaultClippingsChosen) {
-                            const name = r.vaultClippingsName || 'Clippings';
-                            statusEl.textContent = 'Folder chosen: ' + name;
-                        } else statusEl.textContent = 'No folder chosen';
-                    });
+                    chrome.storage.local.get(
+                        ["vaultClippingsChosen", "vaultClippingsName"],
+                        (r) => {
+                            if (r && r.vaultClippingsChosen) {
+                                const name =
+                                    r.vaultClippingsName || "Clippings";
+                                statusEl.textContent = "Folder chosen: " + name;
+                            } else statusEl.textContent = "No folder chosen";
+                        }
+                    );
                 } catch (e) {
-                    statusEl.textContent = 'No folder chosen';
+                    statusEl.textContent = "No folder chosen";
                 }
             }
             refreshStatus();
 
-            chooseBtn.addEventListener('click', () => {
+            chooseBtn.addEventListener("click", () => {
                 try {
                     // Ask background to open the extension popup which hosts the directory picker.
-                    chrome.runtime.sendMessage({ action: 'open-editor-popup' });
+                    chrome.runtime.sendMessage({ action: "open-editor-popup" });
                     // update status after a short delay (user completes pick in the popup)
                     setTimeout(refreshStatus, 1200);
                 } catch (e) {
-                    console.error('failed to request editor popup', e);
+                    console.error("failed to request editor popup", e);
                 }
             });
         })();
@@ -316,56 +320,65 @@
                 date: new Date().toISOString(),
             };
             // send to background to persist and export
-                try {
-                    chrome.runtime.sendMessage({ action: "save-clipping", payload }, (resp) => {
+            try {
+                chrome.runtime.sendMessage(
+                    { action: "save-clipping", payload },
+                    (resp) => {
                         if (chrome.runtime.lastError) {
                             // background may have unloaded; ignore
                         }
-                    });
-                } catch (e) {
-                    console.error("Failed to send clipping", e);
-                }
+                    }
+                );
+            } catch (e) {
+                console.error("Failed to send clipping", e);
+            }
             removeModal();
         });
     }
 
     // Listen for vault write failures and show a visible banner in the open modal
     chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-        if (!msg || msg.action !== 'vault-write-failed') return;
+        if (!msg || msg.action !== "vault-write-failed") return;
         try {
             if (!currentModal) return;
             const shadow = currentModal.shadow;
             const panel = currentModal.panel;
             if (!panel || !shadow) return;
             // remove existing banner
-            const existing = shadow.querySelector('#clippings_failure_banner');
+            const existing = shadow.querySelector("#clippings_failure_banner");
             if (existing) existing.remove();
-            const banner = document.createElement('div');
-            banner.id = 'clippings_failure_banner';
-            banner.style.background = '#fee';
-            banner.style.color = '#900';
-            banner.style.padding = '8px';
-            banner.style.border = '1px solid #f2c0c0';
-            banner.style.borderRadius = '6px';
-            banner.style.marginBottom = '8px';
-            banner.style.fontSize = '13px';
-            banner.textContent = 'Failed to save to vault. ' + (msg.error || 'Permission denied.');
-            const btn = document.createElement('button');
-            btn.textContent = 'Re-pick folder';
-            btn.style.marginLeft = '8px';
-            btn.addEventListener('click', () => {
+            const banner = document.createElement("div");
+            banner.id = "clippings_failure_banner";
+            banner.style.background = "#fee";
+            banner.style.color = "#900";
+            banner.style.padding = "8px";
+            banner.style.border = "1px solid #f2c0c0";
+            banner.style.borderRadius = "6px";
+            banner.style.marginBottom = "8px";
+            banner.style.fontSize = "13px";
+            banner.textContent =
+                "Failed to save to vault. " +
+                (msg.error || "Permission denied.");
+            const btn = document.createElement("button");
+            btn.textContent = "Re-pick folder";
+            btn.style.marginLeft = "8px";
+            btn.addEventListener("click", () => {
                 try {
-                    chrome.runtime.sendMessage({ action: 'open-editor-popup' }, (resp) => {
-                        if (chrome.runtime.lastError) {
-                            // ignore
+                    chrome.runtime.sendMessage(
+                        { action: "open-editor-popup" },
+                        (resp) => {
+                            if (chrome.runtime.lastError) {
+                                // ignore
+                            }
                         }
-                    });
+                    );
                 } catch (e) {}
             });
             banner.appendChild(btn);
             // insert banner at top of panel content (before meta)
-            const meta = shadow.querySelector('.clippings-meta');
-            if (meta && meta.parentNode) meta.parentNode.insertBefore(banner, meta.nextSibling);
+            const meta = shadow.querySelector(".clippings-meta");
+            if (meta && meta.parentNode)
+                meta.parentNode.insertBefore(banner, meta.nextSibling);
         } catch (e) {}
     });
 

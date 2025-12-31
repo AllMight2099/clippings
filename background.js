@@ -112,24 +112,46 @@ chrome.commands.onCommand.addListener((command) => {
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (!msg) return;
     // removed legacy open-dir-picker handling — use editor popup instead
-    if (msg.action === 'open-editor-popup') {
+    if (msg.action === "open-editor-popup") {
         try {
             if (chrome.action && chrome.action.openPopup) {
-                chrome.action.openPopup().then(() => sendResponse({ ok: true })).catch((err) => {
-                    // fallback to creating a popup window
-                    try {
-                        chrome.windows.create({ url: chrome.runtime.getURL('editor.html'), type: 'popup', width: 520, height: 560 }, () => sendResponse({ ok: true }));
-                    } catch (e) {
-                        console.error('failed to open editor popup fallback', e);
-                        sendResponse({ ok: false });
-                    }
-                });
+                chrome.action
+                    .openPopup()
+                    .then(() => sendResponse({ ok: true }))
+                    .catch((err) => {
+                        // fallback to creating a popup window
+                        try {
+                            chrome.windows.create(
+                                {
+                                    url: chrome.runtime.getURL("editor.html"),
+                                    type: "popup",
+                                    width: 520,
+                                    height: 560,
+                                },
+                                () => sendResponse({ ok: true })
+                            );
+                        } catch (e) {
+                            console.error(
+                                "failed to open editor popup fallback",
+                                e
+                            );
+                            sendResponse({ ok: false });
+                        }
+                    });
             } else {
                 // older chromium: fallback
-                chrome.windows.create({ url: chrome.runtime.getURL('editor.html'), type: 'popup', width: 520, height: 560 }, () => sendResponse({ ok: true }));
+                chrome.windows.create(
+                    {
+                        url: chrome.runtime.getURL("editor.html"),
+                        type: "popup",
+                        width: 520,
+                        height: 560,
+                    },
+                    () => sendResponse({ ok: true })
+                );
             }
         } catch (e) {
-            console.error('failed to open editor popup', e);
+            console.error("failed to open editor popup", e);
             sendResponse({ ok: false });
         }
         return true;
@@ -169,7 +191,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                 // Check whether a vault Clippings directory has been chosen.
                 // If present, skip the Downloads export and invoke the helper to write
                 // directly into the chosen folder. Otherwise, fall back to Downloads.
-                chrome.storage.local.get(['vaultClippingsChosen'], (r) => {
+                chrome.storage.local.get(["vaultClippingsChosen"], (r) => {
                     if (r && r.vaultClippingsChosen) {
                         // Try to write directly using persisted directory handle (silent if permission exists).
                         (async () => {
@@ -177,60 +199,116 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                                 // helper to read IndexedDB stored handle
                                 function idbGet(key) {
                                     return new Promise((resolve, reject) => {
-                                        const rq = indexedDB.open('clippings-db', 1);
-                                        rq.onupgradeneeded = (ev) => ev.target.result.createObjectStore('store');
+                                        const rq = indexedDB.open(
+                                            "clippings-db",
+                                            1
+                                        );
+                                        rq.onupgradeneeded = (ev) =>
+                                            ev.target.result.createObjectStore(
+                                                "store"
+                                            );
                                         rq.onsuccess = (ev) => {
                                             const db = ev.target.result;
-                                            const tx = db.transaction('store', 'readonly');
-                                            const req = tx.objectStore('store').get(key);
-                                            req.onsuccess = () => { resolve(req.result); db.close(); };
-                                            req.onerror = () => { reject(req.error); db.close(); };
+                                            const tx = db.transaction(
+                                                "store",
+                                                "readonly"
+                                            );
+                                            const req = tx
+                                                .objectStore("store")
+                                                .get(key);
+                                            req.onsuccess = () => {
+                                                resolve(req.result);
+                                                db.close();
+                                            };
+                                            req.onerror = () => {
+                                                reject(req.error);
+                                                db.close();
+                                            };
                                         };
                                         rq.onerror = () => reject(rq.error);
                                     });
                                 }
 
-                                const dirHandle = await idbGet('vaultClippingsDir');
-                                if (dirHandle && typeof dirHandle.getFileHandle === 'function') {
+                                const dirHandle = await idbGet(
+                                    "vaultClippingsDir"
+                                );
+                                if (
+                                    dirHandle &&
+                                    typeof dirHandle.getFileHandle ===
+                                        "function"
+                                ) {
                                     // attempt a write without prompting; if permission is granted this should succeed
-                                    const fileHandle = await dirHandle.getFileHandle('clippings.md', { create: true });
-                                    const writable = await fileHandle.createWritable();
+                                    const fileHandle =
+                                        await dirHandle.getFileHandle(
+                                            "clippings.md",
+                                            { create: true }
+                                        );
+                                    const writable =
+                                        await fileHandle.createWritable();
                                     await writable.write(md);
                                     await writable.close();
-                                    sendResponse({ ok: true, writtenToVault: true });
+                                    sendResponse({
+                                        ok: true,
+                                        writtenToVault: true,
+                                    });
                                     return;
                                 }
                             } catch (err) {
                                 // writing failed; fallthrough to opening popup as fallback
-                                console.warn('direct vault write failed, opening popup fallback', err);
+                                console.warn(
+                                    "direct vault write failed, opening popup fallback",
+                                    err
+                                );
                             }
 
                             // Vault exists but direct write failed — open the popup to request permission and write there
                             try {
-                                let url = chrome.runtime.getURL('editor.html') + '?autoWrite=1';
+                                let url =
+                                    chrome.runtime.getURL("editor.html") +
+                                    "?autoWrite=1";
                                 try {
-                                    if (sender && sender.tab && typeof sender.tab.id !== 'undefined') {
-                                        url += '&tabId=' + encodeURIComponent(sender.tab.id);
+                                    if (
+                                        sender &&
+                                        sender.tab &&
+                                        typeof sender.tab.id !== "undefined"
+                                    ) {
+                                        url +=
+                                            "&tabId=" +
+                                            encodeURIComponent(sender.tab.id);
                                     }
                                 } catch (e) {}
-                                chrome.windows.create({ url, type: 'popup', width: 480, height: 220, focused: true }, () => {});
+                                chrome.windows.create(
+                                    {
+                                        url,
+                                        type: "popup",
+                                        width: 480,
+                                        height: 220,
+                                        focused: true,
+                                    },
+                                    () => {}
+                                );
                             } catch (e) {
-                                console.error('failed to open write helper', e);
+                                console.error("failed to open write helper", e);
                             }
                             sendResponse({ ok: true, writtenToVault: true });
                         })();
                         return true; // indicate async response
                     } else {
                         // No vault folder — continue to download to Downloads as before.
-                        const dataUrl = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(md);
+                        const dataUrl =
+                            "data:text/markdown;charset=utf-8," +
+                            encodeURIComponent(md);
                         chrome.downloads.download(
                             {
-                                filename: 'Clippings/clippings.md',
-                                conflictAction: 'overwrite',
+                                filename: "Clippings/clippings.md",
+                                conflictAction: "overwrite",
                                 url: dataUrl,
                             },
                             () => {
-                                sendResponse({ ok: true, writtenToDownloads: true });
+                                sendResponse({
+                                    ok: true,
+                                    writtenToDownloads: true,
+                                });
                             }
                         );
                     }
@@ -266,11 +344,19 @@ function generateMarkdown(sites) {
 
 // Listen for fallback download requests from helper pages
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    if (!msg || msg.action !== 'fallback-download' || !msg.md) return;
+    if (!msg || msg.action !== "fallback-download" || !msg.md) return;
     try {
-        const dataUrl = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(msg.md);
-        chrome.downloads.download({ filename: 'Clippings/clippings.md', conflictAction: 'overwrite', url: dataUrl }, () => {});
+        const dataUrl =
+            "data:text/markdown;charset=utf-8," + encodeURIComponent(msg.md);
+        chrome.downloads.download(
+            {
+                filename: "Clippings/clippings.md",
+                conflictAction: "overwrite",
+                url: dataUrl,
+            },
+            () => {}
+        );
     } catch (e) {
-        console.error('fallback-download failed', e);
+        console.error("fallback-download failed", e);
     }
 });
