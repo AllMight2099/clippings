@@ -20,7 +20,7 @@
       .clippings-title{cursor:move;user-select:none}
       .clippings-panel h3{margin:0 0 8px;font-size:14px}
       .clippings-meta{font-size:12px;color:#444;margin-bottom:8px}
-      .clippings-text, .clippings-comment{width:100%;min-height:60px;border:1px solid #ddd;border-radius:6px;padding:8px;margin-bottom:8px;resize:vertical}
+      .clippings-text, .clippings-comment{width:100%;min-height:60px;border:1px solid #ddd;border-radius:6px;padding:8px;margin-bottom:8px;resize:vertical;box-sizing:border-box;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;max-width:100%;overflow:auto}
       .clippings-actions{display:flex;gap:8px;justify-content:flex-end}
       .clippings-btn{padding:8px 12px;border-radius:6px;border:1px solid #ccc;background:#f2f2f2;cursor:pointer}
       .clippings-save{background:#0b66ff;color:#fff;border-color:#0758d1}
@@ -70,7 +70,6 @@
     try {
       if (shadowHost) shadowHost.remove();
     } catch (e) {}
-    window.__clippings_injected = false;
     shadowHost = null;
   }
 
@@ -178,10 +177,6 @@
     }
   });
 
-  // If injected without message, auto-open using current selection
-  try {
-    const sel = window.getSelection ? window.getSelection().toString() : '';
-    showModal({ text: sel });
-  } catch (e) {}
+  // Do not auto-open on injection; rely on background messages to show the modal
 
 })();

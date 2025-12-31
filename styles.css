@@ -39,6 +39,14 @@ textarea {
     border-radius: 6px;
     resize: vertical;
 }
+#textareas, textarea {
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+    overflow: auto;
+}
 #selection {
     background: #f8f8f8;
 }
