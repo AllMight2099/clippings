@@ -16,6 +16,12 @@
         "default_popup": "editor.html",
         "default_title": "Create clipping"
     },
+    "web_accessible_resources": [
+        {
+            "resources": [],
+            "matches": ["<all_urls>"]
+        }
+    ],
     "commands": {
         "create-clipping": {
             "suggested_key": {
