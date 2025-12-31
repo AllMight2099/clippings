@@ -136,7 +136,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                     encodeURIComponent(md);
                 chrome.downloads.download(
                     {
-                        filename: "clippings.md",
+                        filename: "Clippings/clippings.md",
                         conflictAction: "overwrite",
                         url: dataUrl,
                     },

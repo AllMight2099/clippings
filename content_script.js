@@ -40,7 +40,7 @@
       <button id="clippings_close" class="clippings-close" aria-label="Close">×</button>
       <div class="clippings-meta"><a id="clippings_url" href="#" target="_blank"></a></div>
       <label>Selection</label>
-      <div id="clippings_text" class="clippings-text" contenteditable="true" aria-label="selection"></div>
+      <div id="clippings_text" class="clippings-text" contenteditable="false" aria-label="selection"></div>
       <label>Note (optional)</label>
       <div id="clippings_note" class="clippings-comment" contenteditable="true" aria-label="note" placeholder="Add a note..."></div>
       <div class="clippings-actions">

@@ -67,16 +67,16 @@ function onSave() {
                 const dataUrl =
                     "data:text/markdown;charset=utf-8," +
                     encodeURIComponent(md);
-                chrome.downloads.download(
-                    {
-                        filename: "clippings.md",
-                        conflictAction: "overwrite",
-                        url: dataUrl,
-                    },
-                    () => {
-                        window.close();
-                    }
-                );
+                    chrome.downloads.download(
+                        {
+                            filename: "Clippings/clippings.md",
+                            conflictAction: "overwrite",
+                            url: dataUrl,
+                        },
+                        () => {
+                            window.close();
+                        }
+                    );
             });
         });
     } catch (e) {
